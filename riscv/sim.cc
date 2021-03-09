@@ -4,6 +4,7 @@
 #include "mmu.h"
 #include "dts.h"
 #include "remote_bitbang.h"
+#include "remote_pjet.h"
 #include "byteorder.h"
 #include "platform.h"
 #include "libfdt.h"
@@ -60,6 +61,7 @@ sim_t::sim_t(const cfg_t *cfg, bool halted,
     histogram_enabled(false),
     log(false),
     remote_bitbang(NULL),
+    remote_pjet(NULL),
     debug_module(this, dm_config)
 {
   signal(SIGINT, &handle_signal);
@@ -194,6 +196,9 @@ void sim_t::main()
       step(INTERLEAVE);
     if (remote_bitbang) {
       remote_bitbang->tick();
+    }
+    if (remote_pjet) {
+      remote_pjet->tick();
     }
   }
 }

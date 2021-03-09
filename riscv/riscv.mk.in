@@ -33,6 +33,7 @@ riscv_hdrs = \
 	debug_module.h \
 	debug_rom_defines.h \
 	remote_bitbang.h \
+	remote_pjet.h \
 	jtag_dtm.h \
 	csrs.h \
 	triggers.h \
@@ -59,6 +60,7 @@ riscv_srcs = \
 	clint.cc \
 	debug_module.cc \
 	remote_bitbang.cc \
+	remote_pjet.cc \
 	jtag_dtm.cc \
 	csrs.cc \
 	triggers.cc \

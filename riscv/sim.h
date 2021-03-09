@@ -27,6 +27,7 @@
 
 class mmu_t;
 class remote_bitbang_t;
+class remote_pjet_t;
 
 // this class encapsulates the processors and memory in a RISC-V machine.
 class sim_t : public htif_t, public simif_t
@@ -60,6 +61,9 @@ public:
   void set_procs_debug(bool value);
   void set_remote_bitbang(remote_bitbang_t* remote_bitbang) {
     this->remote_bitbang = remote_bitbang;
+  }
+  void set_remote_pjet(remote_pjet_t* remote_pjet) {
+   this->remote_pjet = remote_pjet;
   }
   const char* get_dts() { if (dts.empty()) reset(); return dts.c_str(); }
   processor_t* get_core(size_t i) { return procs.at(i); }
@@ -108,6 +112,7 @@ private:
   bool histogram_enabled; // provide a histogram of PCs
   bool log;
   remote_bitbang_t* remote_bitbang;
+  remote_pjet_t* remote_pjet;
 
   // memory-mapped I/O routines
   char* addr_to_mem(reg_t addr);
