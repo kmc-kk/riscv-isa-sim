@@ -3,6 +3,7 @@
 #include "sim.h"
 #include "mmu.h"
 #include "remote_bitbang.h"
+#include "remote_pjet.h"
 #include "cachesim.h"
 #include "extension.h"
 #include <dlfcn.h>
@@ -239,7 +240,9 @@ int main(int argc, char** argv)
   const char* varch = DEFAULT_VARCH;
   const char* dtb_file = NULL;
   uint16_t rbb_port = 0;
+  uint16_t pjet_port = 0;
   bool use_rbb = false;
+  bool use_pjet = false;
   unsigned dmi_rti = 0;
   debug_module_config_t dm_config = {
     .progbufsize = 2,
@@ -322,6 +325,7 @@ int main(int argc, char** argv)
   // I wanted to use --halted, but for some reason that doesn't work.
   parser.option('H', 0, 0, [&](const char* s){halted = true;});
   parser.option(0, "rbb-port", 1, [&](const char* s){use_rbb = true; rbb_port = atoul_safe(s);});
+  parser.option(0, "pjet-port", 1, [&](const char* s){use_pjet = true; pjet_port = atoul_safe(s);});
   parser.option(0, "pc", 1, [&](const char* s){start_pc = strtoull(s, 0, 0);});
   parser.option(0, "hartids", 1, hartids_parser);
   parser.option(0, "ic", 1, [&](const char* s){ic.reset(new icache_sim_t(s));});
@@ -440,7 +444,11 @@ int main(int argc, char** argv)
     remote_bitbang.reset(new remote_bitbang_t(rbb_port, &(*jtag_dtm)));
     s.set_remote_bitbang(&(*remote_bitbang));
   }
-
+  std::unique_ptr<remote_pjet_t> remote_pjet((remote_pjet_t *) NULL);
+  if (use_pjet) {
+    remote_pjet.reset(new remote_pjet_t(pjet_port, &s.debug_module));
+    s.set_remote_pjet(&(*remote_pjet));
+  }
   if (dump_dts) {
     printf("%s", s.get_dts());
     return 0;
